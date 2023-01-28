@@ -11,7 +11,6 @@ func _process(delta):
 	if Input.is_action_just_pressed("escape"):
 		pass
 		Globalvar.walls = $Ubackground.get_used_cells_by_id(2);
-		print(Globalvar.walls);
-		get_tree().change_scene("res://MainGame.tscn");
+		get_tree().change_scene("res://scenes/MainGame.tscn");
 		
 	

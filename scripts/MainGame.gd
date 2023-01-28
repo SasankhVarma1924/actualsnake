@@ -6,6 +6,8 @@ var food_pos : Vector2 = Vector2.ZERO;
 const SNAKET = 1;
 const SNAKEH = 0;
 const FOOD = 4;
+var Wall : Dictionary ;
+var scr : int = 0;
 var sdir : Vector2 = Vector2(1,0);
 var ud : bool = false;
 var lr : bool = false;
@@ -20,31 +22,37 @@ func rand():
 func _ready():
 	pass
 	snake_head = snake_pos[0];
+	drawWalls();
 	
 
 
 func drawWalls():
 	for wall in Globalvar.walls:
 		$EntityMap.set_cell(wall.x,wall.y,3,false,false,false,Vector2(0,0));
-		if wall == snake_head :
-			OVER=true;
+		Wall[wall]=true;
+	
 
 
 func _process(delta):
 	if snake_head.x >= 16 or snake_head.y >=16 or snake_head.x <=-1 or snake_head.y <=-1:
 		OVER = true;
 		
+	if Wall.has(snake_head):
+		OVER = true;
 	if OVER == true:
-		get_tree().change_scene("res://Score.tscn");
+		Globalvar.score = scr;
+		get_tree().change_scene("res://scenes/Score.tscn");
+	if Wall.has(food_pos):
+		update_food();
 	
 
 func _on_Timer_timeout():
-	delete_tiles();
+	delete_tiles(SNAKET);
 	
 	drawSnake();
 	drawFood();
-	drawWalls();
 	
+
 
 
 func _input(event):
@@ -79,8 +87,8 @@ func snake_increase():
 	snake_pos.push_front(head);
 	
 
-func delete_tiles():
-	var cells = $EntityMap.get_used_cells();
+func delete_tiles(var id : int):
+	var cells = $EntityMap.get_used_cells_by_id(id);
 	for cell in cells:
 		$EntityMap.set_cell(cell.x,cell.y,-1);
 
@@ -96,6 +104,7 @@ func drawFood():
 func drawSnake():
 	pass
 	if(snake_head == food_pos):
+		scr = scr + 1;
 		snake_increase();
 		update_food();
 	else:
@@ -110,11 +119,8 @@ func drawSnake():
 		var body = snake_pos[i];
 		if body == snake_head:
 			OVER = true;
-		if body == food_pos:
-			var flag = true;
-			while(flag):
-				if food_pos != body:
-					flag = false;
+		if food_pos == body :
+			update_food();
 				
 		$EntityMap.set_cell(body.x,body.y,SNAKET,false,false,false,Vector2(0,0));
 		
