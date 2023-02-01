@@ -73,6 +73,7 @@ func _input(event):
 			sdir.x = -1;
 			sdir.y=0;
 	
+	
 
 
 func update_snake():
